@@ -1,0 +1,231 @@
+################################################################
+# Global configuration
+################################################################
+
+# Timeout in seconds.
+# Duration to give active requests a chance to finish during hot-reloads
+#
+# Optional
+# Default: 10
+#
+# graceTimeOut = 10
+
+# Traefik logs file
+# If not defined, logs to stdout
+#
+# Optional
+#
+# traefikLogsFile = "log/traefik.log"
+
+# Access logs file
+#
+# Optional
+#
+# accessLogsFile = "log/access.log"
+
+# Log level
+#
+# Optional
+# Default: "ERROR"
+#
+logLevel = "ERROR"
+
+# Backends throttle duration: minimum duration between 2 events from providers
+# before applying a new configuration. It avoids unnecessary reloads if multiples events
+# are sent in a short amount of time.
+#
+# Optional
+# Default: "2s"
+#
+# ProvidersThrottleDuration = "5s"
+
+# If non-zero, controls the maximum idle (keep-alive) to keep per-host.  If zero, DefaultMaxIdleConnsPerHost is used.
+# If you encounter 'too many open files' errors, you can either change this value, or change `ulimit` value.
+#
+# Optional
+# Default: http.DefaultMaxIdleConnsPerHost
+#
+# MaxIdleConnsPerHost = 200
+
+# Entrypoints to be used by frontends that do not specify any entrypoint.
+# Each frontend can specify its own entrypoints.
+#
+# Optional
+# Default: ["https"]
+#
+defaultEntryPoints = ["http"]
+
+
+# Entrypoints definition
+#
+# Optional
+# Default:
+ [entryPoints]
+   [entryPoints.http]
+   address = ":80"
+#   [entryPoints.https]
+#   address = ":443"
+#     [entryPoints.https.tls]
+#       [[entryPoints.https.tls.certificates]]
+#       CertFile = "/certs/blitz.cert.pem"
+#       KeyFile = "/certs/blitz.key.unsecure.pem"
+
+#
+# To redirect an http entrypoint to an https entrypoint (with SNI support):
+# [entryPoints]
+#   [entryPoints.http]
+#   address = ":80"
+#     [entryPoints.http.redirect]
+#       entryPoint = "https"
+#   [entryPoints.https]
+#   address = ":443"
+#     [entryPoints.https.tls]
+#       [[entryPoints.https.tls.certificates]]
+#       CertFile = "integration/fixtures/https/snitest.com.cert"
+#       KeyFile = "integration/fixtures/https/snitest.com.key"
+#       [[entryPoints.https.tls.certificates]]
+#       CertFile = "integration/fixtures/https/snitest.org.cert"
+#       KeyFile = "integration/fixtures/https/snitest.org.key"
+#
+# To redirect an entrypoint rewriting the URL:
+# [entryPoints]
+#   [entryPoints.http]
+#   address = ":80"
+#     [entryPoints.http.redirect]
+#       regex = "^http://localhost/(.*)"
+#       replacement = "http://mydomain/$1"
+
+# Enable retry sending request if network error
+#
+# Optional
+#
+# [retry]
+
+# Number of attempts
+#
+# Optional
+# Default: (number servers in backend) -1
+#
+# attempts = 3
+
+# Sets the maximum request body to be stored in memory in Mo
+#
+# Optional
+# Default: 2
+#
+# maxMem = 3
+
+################################################################
+# Web configuration backend
+################################################################
+
+# Enable web configuration backend
+#
+# Optional
+#
+[web]
+
+# Web administration port
+#
+# Required
+#
+address = ":8080"
+
+# SSL certificate and key used
+#
+# Optional
+#
+# CertFile = "traefik.crt"
+# KeyFile = "traefik.key"
+#
+# Set REST API to read-only mode
+#
+# Optional
+# ReadOnly = false
+
+
+
+################################################################
+# Docker configuration backend
+################################################################
+
+# Enable Docker configuration backend
+#
+# Optional
+#
+[docker]
+
+# Docker server endpoint. Can be a tcp or a unix socket endpoint.
+#
+# Required
+#
+endpoint = "unix:///var/run/docker.sock"
+
+# Default domain used.
+# Can be overridden by setting the "traefik.domain" label on a container.
+#
+# Required
+#
+domain = "localhost"
+
+# Enable watch docker changes
+#
+# Optional
+#
+watch = true
+
+# Override default configuration template. For advanced users :)
+#
+# Optional
+#
+# filename = "docker.tmpl"
+
+# Enable docker TLS connection
+#
+# Optional
+#
+#  [docker.tls]
+#  ca = "/etc/ssl/ca.crt"
+#  cert = "/etc/ssl/docker.crt"
+#  key = "/etc/ssl/docker.key"
+#  insecureskipverify = true
+
+
+################################################################
+# Sample rules
+################################################################
+# [backends]
+#   [backends.backend1]
+#     [backends.backend1.circuitbreaker]
+#       expression = "NetworkErrorRatio() > 0.5"
+#     [backends.backend1.servers.server1]
+#     url = "http://172.17.0.2:80"
+#     weight = 10
+#     [backends.backend1.servers.server2]
+#     url = "http://172.17.0.3:80"
+#     weight = 1
+#   [backends.backend2]
+#     [backends.backend2.LoadBalancer]
+#       method = "drr"
+#     [backends.backend2.servers.server1]
+#     url = "http://172.17.0.4:80"
+#     weight = 1
+#     [backends.backend2.servers.server2]
+#     url = "http://172.17.0.5:80"
+#     weight = 2
+#
+# [frontends]
+#   [frontends.frontend1]
+#   backend = "backend2"
+#     [frontends.frontend1.routes.test_1]
+#     rule = "Host: test.localhost, other.localhost"
+#   [frontends.frontend2]
+#   backend = "backend1"
+#   passHostHeader = true
+#   entrypoints = ["https"] # overrides defaultEntryPoints
+#     [frontends.frontend2.routes.test_1]
+#     rule = "Host:{subdomain:[a-z]+}.localhost"
+#   [frontends.frontend3]
+#   entrypoints = ["http", "https"] # overrides defaultEntryPoints
+#   backend = "backend2"
+#     rule = "Path: /test, /other"
