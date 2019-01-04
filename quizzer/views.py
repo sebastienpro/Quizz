@@ -1,9 +1,31 @@
 from django.shortcuts import render
 
-# Create your views here.
+from .models import Quizz
 
-from django.http import HttpResponse
+
+# Placeholder functions
+def get_current_quizz():
+    return Quizz.objects.first()
+
+
+def get_current_round(quizz):
+    return quizz.rounds.first()
+
+
+def get_current_question(round):
+    return round.questions.first()
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    quizz = get_current_quizz()
+    round_ = get_current_round(quizz)
+    question = get_current_question(round_)
+    return render(
+        request,
+        'quizzer/question.html',
+        {
+            'quizz': quizz,
+            'round': round_,
+            'question': question
+        }
+    )
