@@ -3,7 +3,9 @@
 
 {% block body %}
     <span>{{ round.name }}</span>
-    <span id="question">{{ question.question }}</span>
+    <div style="display: flex; min-width: 100vh; min-height: 100vh; justify-content: space-around;">
+        <h1 id="question" style="align-self: center; justify-self: center; background-color: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 10px;">{{ question.question }}</h1>
+    </div>
 {% endblock %}
 
 
@@ -11,7 +13,7 @@
 <script>
     $(document).ready(function() {
         $(document).click(function(ev) {
-            $.post('/teams', {'lol': 'pwet'});
+            $.post('/next/', {});
         });
     });
 </script>
