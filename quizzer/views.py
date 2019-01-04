@@ -40,33 +40,6 @@ def teams(request):
 @login_required
 def next_question(request):
     quizzer_state = get_current_quizz()
-    next_round = False
-    if not quizzer_state.question:
-        next_question = Question.objects.filter(quizz=quizzer_state.quizz, round=quizzer_state.round).order_by('order', 'pk')[0]
-        response = {'question': next_question.question}
-    else:
-        round_questions = Question.objects.filter(round=quizzer_state.round).order_by('order', 'pk')
-        next_question_id = 0
-        for question in round_questions:
-            next_question_id += 1
-            if question.pk == quizzer_state.question.pk:
-                break
-        try:
-            next_question = round_questions[next_question_id]
-            response = {'question': next_question.question}
-        except IndexError:
-            response = {'question': None}
-            next_round = True
-    if next_round:
-        rounds = Round.objects.filter(quizz=quizzer_state.quizz).order_by('pk')
-        round_cpt = 0
-        for quizz_round in rounds:
-            round_cpt += 1
-            if quizz_round.pk == quizzer_state.round.pk:
-                break
-        quizzer_state.round = rounds[round_cpt]
-        quizzer_state.question = None
-    else:
-        quizzer_state.question = next_question
-    quizzer_state.save()
+    quizzer_state.next()
+    response = {'question': quizzer_state.question_name, 'round': quizzer_state.round_name}
     return JsonResponse(response)

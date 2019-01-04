@@ -16,6 +16,9 @@ class Round(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['order', 'pk']
+
 
 class Question(models.Model):
     TYPE_CHOICES = (
@@ -32,6 +35,9 @@ class Question(models.Model):
     def __str__(self):
         return self.question
 
+    class Meta:
+        ordering = ['order', 'pk']
+
 
 class QuizzerState(models.Model):
     quizz = models.ForeignKey(Quizz, on_delete=models.CASCADE)
@@ -40,7 +46,44 @@ class QuizzerState(models.Model):
     state = models.NullBooleanField(default=None)
 
     def __str__(self):
-        return self.quizz.name+" / "+self.round.name+" -> "+str(self.state)
+        if self.round:
+            return f"{self.quizz.name}/{self.round.name} -> {self.state}"
+        else:
+            return f"{self.quizz.name} -> {self.state}"
+
+    def next(self):
+        self.question = self.get_next_question()
+        if not self.question:
+            self.round = self.get_next_round()
+        self.save()
+
+    def get_next_question(self):
+        if not self.question:
+            return Question.objects.filter(round=self.round).first()
+        questions = list(Question.objects.filter(round=self.round))
+        idx = questions.index(self.question)
+        try:
+            return questions[idx + 1]
+        except IndexError:
+            return None
+
+    def get_next_round(self):
+        rounds = list(Round.objects.filter(quizz=self.quizz))
+        idx = rounds.index(self.round)
+        try:
+            return rounds[idx + 1]
+        except IndexError:
+            return None
+
+    @property
+    def question_name(self):
+        if self.question:
+            return self.question.question
+
+    @property
+    def round_name(self):
+        if self.round:
+            return self.round.name
 
 
 class Team(models.Model):
