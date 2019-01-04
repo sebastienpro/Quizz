@@ -24,7 +24,7 @@ class Question(models.Model):
         ('vid', 'video')
     )
     question = models.TextField(null=False)
-    answer = models.TextField(null=True, default=None)
+    answer = models.TextField(null=True, default=None, blank=True)
     type = models.CharField(max_length=3, choices=TYPE_CHOICES, default='txt')
     order = models.IntegerField(default=0)
     round = models.ForeignKey(Round, on_delete=models.CASCADE, related_name='questions')
