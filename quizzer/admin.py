@@ -1,10 +1,11 @@
 from django.contrib import admin
 
-from .models import Quizz, Round, Question, Team, Participate
+from .models import Quizz, Round, Question, Team, Participate, QuizzerState
 
 admin.site.register(Question)
 admin.site.register(Team)
 admin.site.register(Participate)
+admin.site.register(QuizzerState)
 
 
 class QuestionInline(admin.StackedInline):

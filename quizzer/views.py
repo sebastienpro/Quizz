@@ -1,31 +1,24 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from .models import Quizz
+from .models import QuizzerState
 
 
 # Placeholder functions
 def get_current_quizz():
-    return Quizz.objects.first()
+    return QuizzerState.objects.filter(state=True).order_by('-pk')[0]
 
 
-def get_current_round(quizz):
-    return quizz.rounds.first()
-
-
-def get_current_question(round):
-    return round.questions.first()
-
-
+@login_required(login_url='/admin/login/')
 def index(request):
-    quizz = get_current_quizz()
-    round_ = get_current_round(quizz)
-    question = get_current_question(round_)
+    quizzer_state = get_current_quizz()
+
     return render(
         request,
         'quizzer/question.html',
         {
-            'quizz': quizz,
-            'round': round_,
-            'question': question
+            'quizz': quizzer_state.quizz,
+            'round': quizzer_state.round,
+            'question': quizzer_state.question
         }
     )

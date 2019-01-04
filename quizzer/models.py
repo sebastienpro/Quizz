@@ -32,6 +32,16 @@ class Question(models.Model):
         return self.question
 
 
+class QuizzerState(models.Model):
+    quizz = models.ForeignKey(Quizz, on_delete=models.CASCADE)
+    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
+    state = models.NullBooleanField(default=None)
+
+    def __str__(self):
+        return self.quizz.name+" / "+self.round.name+" -> "+str(self.state)
+
+
 class Team(models.Model):
     name = models.CharField(max_length=255)
 
