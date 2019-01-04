@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import QuizzerState
+from .models import QuizzerState, Participate
 
 
 # Placeholder functions
@@ -25,3 +26,12 @@ def index(request):
         )
     else:
         return render(request, 'quizzer/start.html')
+
+
+def teams(request):
+    quizzer_state = get_current_quizz()
+    subscribed_teams = Participate.objects.filter(quizz=quizzer_state.quizz)
+    response = {'teams': []}
+    for team in subscribed_teams:
+        response['teams'].append({team.team.name: team.points})
+    return JsonResponse(response)
