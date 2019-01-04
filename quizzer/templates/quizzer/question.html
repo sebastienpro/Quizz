@@ -13,7 +13,9 @@
 <script>
     $(document).ready(function() {
         $(document).click(function(ev) {
-            $.post('next/', {});
+            $.post('next/', {}, function(data) {
+                $('#question').text(data.question);
+            });
         });
     });
 </script>
