@@ -23,6 +23,17 @@ services:
       traefik.backend: "static"
       traefik.frontend.rule: "Host:spro.local;PathPrefix:/static"
 
+  pgquizz:
+    image: postgres:10.6
+    ports:
+      - "5434"
+    environment:
+      - POSTGRES_USER=quizz
+      - POSTGRES_DB=quizz
+      - POSTGRES_PASSWORD=nopass
+    volumes:
+      - "./pgVolume:/var/lib/postgresql/data"
+
   traefik:
     image: containous/traefik:latest
     ports:
