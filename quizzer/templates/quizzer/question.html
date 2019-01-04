@@ -2,6 +2,17 @@
 
 
 {% block body %}
-    {{ round.name }}
-    {{ question.question }}
+    <span>{{ round.name }}</span>
+    <span id="question">{{ question.question }}</span>
+{% endblock %}
+
+
+{% block bottom %}
+<script>
+    $(document).ready(function() {
+        $(document).click(function(ev) {
+            $.post('/teams', {'lol': 'pwet'});
+        });
+    });
+</script>
 {% endblock %}
