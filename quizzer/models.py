@@ -11,6 +11,7 @@ class Quizz(models.Model):
 class Round(models.Model):
     name = models.CharField(max_length=255)
     quizz = models.ForeignKey(Quizz, on_delete=models.CASCADE, related_name='rounds')
+    order = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -34,7 +35,7 @@ class Question(models.Model):
 
 class QuizzerState(models.Model):
     quizz = models.ForeignKey(Quizz, on_delete=models.CASCADE)
-    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    round = models.ForeignKey(Round, on_delete=models.CASCADE, null=True, blank=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
     state = models.NullBooleanField(default=None)
 
