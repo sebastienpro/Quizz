@@ -2,14 +2,16 @@ from django.contrib import admin
 
 from .models import Quizz, Round, Question, Team, Participate
 
-
-admin.site.register(Round)
 admin.site.register(Question)
 admin.site.register(Team)
 admin.site.register(Participate)
 
 
-class RoundInline(admin.StackedInline):
+class QuestionInline(admin.StackedInline):
+    model = Question
+
+
+class RoundInline(admin.TabularInline):
     model = Round
 
 
@@ -22,3 +24,10 @@ class QuizzAdmin(admin.ModelAdmin):
 
     def rounds_names(self, obj):
         return ', '.join(obj.rounds.order_by('id').values_list('name', flat=True))
+
+
+@admin.register(Round)
+class RoundAdmin(admin.ModelAdmin):
+    inlines = [
+        QuestionInline,
+    ]
