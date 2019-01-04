@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import Quizz, Round, Question, Team, Participate, QuizzerState
 
 admin.site.register(Question)
-admin.site.register(Team)
 admin.site.register(Participate)
 admin.site.register(QuizzerState)
 
@@ -14,6 +13,10 @@ class QuestionInline(admin.StackedInline):
 
 class RoundInline(admin.TabularInline):
     model = Round
+
+
+class ParticipateInline(admin.TabularInline):
+    model = Participate
 
 
 @admin.register(Quizz)
@@ -31,4 +34,11 @@ class QuizzAdmin(admin.ModelAdmin):
 class RoundAdmin(admin.ModelAdmin):
     inlines = [
         QuestionInline,
+    ]
+
+
+@admin.register(Team)
+class TeamAdmin(admin.ModelAdmin):
+    inlines = [
+        ParticipateInline,
     ]
