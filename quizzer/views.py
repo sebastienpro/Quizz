@@ -32,7 +32,7 @@ def teams(request):
     subscribed_teams = Participate.objects.filter(quizz=quizzer_state.quizz)
     response = {'teams': []}
     for team in subscribed_teams:
-        response['teams'].append({'name': team.team.name, 'points': team.points})
+        response['teams'].append({'name': team.team.name, 'points': team.points, 'id': team.pk})
     return JsonResponse(response)
 
 
