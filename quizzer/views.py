@@ -2,8 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import QuizzerState, Participate, Question, Round
+from Quizz.settings import REDIS
+from .models import QuizzerState, Participate, Question, Round, Team
 
+import redis
+redis_conn = redis.Redis(host=REDIS['host'], port=REDIS['port'], db=REDIS['database'])
 
 # Placeholder functions
 def get_current_quizz():
@@ -47,3 +50,19 @@ def previous_question(request):
     quizzer_state.previous()
     response = {'question': quizzer_state.question_name, 'round': quizzer_state.round_name}
     return JsonResponse(response)
+
+
+@login_required
+def get_team_has_buzzed(request):
+    team_id = redis_conn.get("buzzer")
+    try:
+        team = Team.objects.get(pk=team_id)
+        return JsonResponse({"team": team.name})
+    except Team.DoesNotExist:
+        return JsonResponse({"team": None})
+
+
+@login_required()
+def clear_buzzer(request):
+    redis_conn.delete("buzzer")
+    return JsonResponse({"team": None})

@@ -1,9 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
+from Quizz.settings import REDIS
 from quizzer.views import get_current_quizz
 from quizzer.models import Team
 
+import redis
+
+redis_conn = redis.Redis(host=REDIS['host'], port=REDIS['port'], db=REDIS['database'])
 
 def teams(request):
     quizzer_state = get_current_quizz()
@@ -28,5 +33,8 @@ def buzzer(request):
     return render(request, 'buzzer/buzzer.html', {'team_name': team_name})
 
 
+@csrf_exempt
 def buzz(request):
+    team_id = request.session.get('team_id')
+    redis_conn.setnx('buzzer', team_id)
     return HttpResponse('')
