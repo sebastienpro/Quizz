@@ -14,6 +14,9 @@
     </div>
 </div>
 
+<div id="buzzing-team">
+</div>
+
 <div class="team" id="team-template">
     <div class="beer team-btn">🍺</div>
     <div class="fuck">🖕</div>
@@ -28,6 +31,14 @@
 body {
     margin: 0;
     background: radial-gradient(ellipse 90% 80% at center, #895edc, #90c0e2);
+}
+#buzzing-team {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    border: 1px solid red;
+    background-color: white;
+    font-size: 32px;
 }
 .container {
     display: flex;
@@ -180,8 +191,30 @@ body {
             })
         }
 
+
         updateTeam();
         // setInterval(updateTeam, 500);
+
+
+        function updateBuzzingTeam() {
+            $.get('{% url "quizzer:get_team_has_buzzed" %}', {}, function (data) {
+                console.log(data);
+                if (data.team) {
+                    $('#buzzing-team').text(data.team);
+                    $('#buzzing-team').show();
+                } else {
+                    $('#buzzing-team').hide();
+                }
+            });
+        }
+
+        setInterval(updateBuzzingTeam, 500);
+
+        $('#buzzing-team').click(function(e) {
+            e.preventDefault();
+            $.post('{% url "quizzer:clear_buzzer" %}');
+            return false;
+        });
     });
 </script>
 {% endblock %}
