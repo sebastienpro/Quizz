@@ -62,7 +62,16 @@ def get_team_has_buzzed(request):
         return JsonResponse({"team": None})
 
 
-@login_required()
+@login_required
 def clear_buzzer(request):
     redis_conn.delete("buzzer")
     return JsonResponse({"team": None})
+
+
+@login_required
+def add_point(request, team_id):
+    quizzer_state = get_current_quizz()
+    team_participation = Participate.objects.get(team_id=team_id, quizz=quizzer_state.quizz)
+    team_participation.points += 1
+    team_participation.save()
+    return teams(request)
