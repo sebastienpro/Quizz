@@ -13,19 +13,15 @@ def get_current_quizz():
 @login_required(login_url='/admin/login/')
 def index(request):
     quizzer_state = get_current_quizz()
-
-    if quizzer_state.question:
-        return render(
-            request,
-            'quizzer/question.html',
-            {
-                'quizz': quizzer_state.quizz,
-                'round': quizzer_state.round,
-                'question': quizzer_state.question
-            }
-        )
-    else:
-        return render(request, 'quizzer/start.html')
+    return render(
+        request,
+        'quizzer/question.html',
+        {
+            'quizz': quizzer_state.quizz,
+            'round': quizzer_state.round,
+            'question': quizzer_state.question
+        }
+    )
 
 
 def teams(request):
