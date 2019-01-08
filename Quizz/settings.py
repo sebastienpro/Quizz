@@ -92,6 +92,12 @@ DATABASES = {
     }
 }
 
+REDIS = {
+    'host': os.environ.get('REDIS_HOST', 'localhost'),
+    'port': int(os.environ.get('REDIS_PORT', 6379)),
+    'database': os.environ.get('REDIS_DATABASE', 1),
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
