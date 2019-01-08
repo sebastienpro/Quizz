@@ -57,6 +57,12 @@ class QuizzerState(models.Model):
             self.round = self.get_next_round()
         self.save()
 
+    def previous(self):
+        self.question = self.get_prev_question()
+        if not self.question:
+            self.round = self.get_prev_round()
+        self.save()
+
     def get_next_question(self):
         if not self.question:
             return Question.objects.filter(round=self.round).first()
@@ -68,10 +74,36 @@ class QuizzerState(models.Model):
             return None
 
     def get_next_round(self):
+        if not self.round:
+            return Round.objects.filter(quizz=self.quizz).first()
         rounds = list(Round.objects.filter(quizz=self.quizz))
         idx = rounds.index(self.round)
         try:
             return rounds[idx + 1]
+        except IndexError:
+            return None
+
+    def get_prev_question(self):
+        if not self.question:
+            return Question.objects.filter(round=self.round).last()
+        questions = list(Question.objects.filter(round=self.round))
+        idx = questions.index(self.question)
+        if idx == 0:
+            return None
+        try:
+            return questions[idx - 1]
+        except IndexError:
+            return None
+
+    def get_prev_round(self):
+        if not self.round:
+            return Round.objects.filter(quizz=self.quizz).last()
+        rounds = list(Round.objects.filter(quizz=self.quizz))
+        idx = rounds.index(self.round)
+        if idx == 0:
+            return None
+        try:
+            return rounds[idx - 1]
         except IndexError:
             return None
 

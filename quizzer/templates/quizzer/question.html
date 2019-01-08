@@ -84,21 +84,31 @@ body {
 }
 </style>
 <script>
+    function updateQuestion(data) {
+        $('#question').text(data.question);
+        $('#round').text(data.round);
+
+        $('.container').removeClass('round');
+        $('.container').removeClass('question');
+        
+        if (data.question) {
+            $('.container').addClass('question');
+        } else if (data.round) {
+            $('.container').addClass('round');
+        }
+    }
+
     $(document).ready(function() {
         $(document).click(function(ev) {
-            $.post('next/', {}, function(data) {
-                $('#question').text(data.question);
-                $('#round').text(data.round);
+            $.post('next/', {}, updateQuestion);
+        });
 
-                $('.container').removeClass('round');
-                $('.container').removeClass('question');
-                
-                if (data.question) {
-                    $('.container').addClass('question');
-                } else if (data.round) {
-                    $('.container').addClass('round');
-                }
-            });
+        $(document).keyup(function(e) {
+            if (e.which == 37) {
+                $.post('prev/', {}, updateQuestion);
+            } else if (e.which == 39) {
+                $.post('next/', {}, updateQuestion);
+            }
         });
 
         function updateTeam() {

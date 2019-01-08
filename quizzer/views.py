@@ -39,3 +39,11 @@ def next_question(request):
     quizzer_state.next()
     response = {'question': quizzer_state.question_name, 'round': quizzer_state.round_name}
     return JsonResponse(response)
+
+
+@login_required
+def previous_question(request):
+    quizzer_state = get_current_quizz()
+    quizzer_state.previous()
+    response = {'question': quizzer_state.question_name, 'round': quizzer_state.round_name}
+    return JsonResponse(response)
