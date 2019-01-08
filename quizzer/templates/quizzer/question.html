@@ -5,7 +5,6 @@
 <div class="container {% if question %}question{% elif round %}round{% endif %}">
     <div class="inner-container">
         <span id="round">{{ round.name }}</span>
-
         <h1 id="question">{{ question.question_html|safe }}</h1>
     </div>
 
@@ -16,7 +15,7 @@
 </div>
 
 <div class="team" id="team-template">
-    <div class="beer">🍺</div>
+    <div class="beer team-btn">🍺</div>
     <div class="fuck">🖕</div>
     <div class="name"></div>
     <div class="points"></div>
@@ -70,6 +69,7 @@ body {
 #round {
     margin: 5px;
     font-size: 28px;
+    text-align: center;
 }
 
 #question {
@@ -148,9 +148,9 @@ body {
     }
 
     $(document).ready(function() {
-        $(document).click(function(ev) {
-            $.post('next/', {}, updateQuestion);
-        });
+        // $(document).click(function(ev) {
+        //     $.post('next/', {}, updateQuestion);
+        // });
 
         $(document).keyup(function(e) {
             if (e.which == 37) {
@@ -167,15 +167,21 @@ body {
                     var team = data['teams'][i];
                     var $team = $('#team-template').clone();
                     $team.attr('id', '');
+                    $team.attr('team-id', team.id);
                     $team.find('.name').text(team.name);
                     $team.find('.points').text(team.points);
                     $team.appendTo('#teams');
+                    $team.find('.beer').click(function (e) {
+                        var $team = $($(e.target).parent());
+                        var teamId = $team.attr('team-id');
+                        $.post('/quizzer/add/' + teamId + '/', {}, updateTeam);
+                    });
                 }
             })
         }
 
         updateTeam();
-        setInterval(updateTeam, 500);
+        // setInterval(updateTeam, 500);
     });
 </script>
 {% endblock %}
