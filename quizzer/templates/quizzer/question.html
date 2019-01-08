@@ -6,7 +6,7 @@
     <div class="inner-container">
         <span id="round">{{ round.name }}</span>
 
-        <h1 id="question">{{ question.question }}</h1>
+        <h1 id="question">{{ question.question_html|safe }}</h1>
     </div>
 
     <div id="sidebar">
@@ -83,6 +83,10 @@ body {
     text-align: center;
 }
 
+#question > ul {
+    text-align: left;
+}
+
 #teams {
     margin: 5px;
     display: flex;
@@ -92,9 +96,9 @@ body {
     border-radius: 10px;
 }
 
-#teams > ul {
+#teams {
     list-style: none;
-    margin: 0;
+    margin: 0 10px;
     padding: 0;
     background-color: white;
     border-radius: 5px;
@@ -102,7 +106,7 @@ body {
     box-shadow: 0 8px 6px -6px black;
 }
 
-#teams > ul > li {
+.teams {
     font-size: 19px;
     white-space: nowrap;
 }
@@ -130,8 +134,8 @@ body {
 </style>
 <script>
     function updateQuestion(data) {
-        $('#question').text(data.question);
-        $('#round').text(data.round);
+        $('#question').html(data.question);
+        $('#round').html(data.round);
 
         $('.container').removeClass('round');
         $('.container').removeClass('question');

@@ -1,3 +1,5 @@
+import markdown
+
 from django.db import models
 
 
@@ -37,6 +39,10 @@ class Question(models.Model):
 
     class Meta:
         ordering = ['order', 'pk']
+
+    @property
+    def question_html(self):
+        return markdown.markdown(self.question)
 
 
 class QuizzerState(models.Model):
@@ -110,7 +116,7 @@ class QuizzerState(models.Model):
     @property
     def question_name(self):
         if self.question:
-            return self.question.question
+            return self.question.question_html
 
     @property
     def round_name(self):

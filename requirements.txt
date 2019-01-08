@@ -2,3 +2,4 @@ Django
 gunicorn==19.3.0
 psycopg2
 redis
+markdown
