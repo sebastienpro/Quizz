@@ -2,14 +2,68 @@
 
 
 {% block body %}
-    <span id="round">{{ round.name }}</span>
-    <div style="display: flex; min-width: 100vh; min-height: 100vh; justify-content: space-around;">
-        <h1 id="question" style="align-self: center; justify-self: center; background-color: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 10px;">{{ question.question }}</h1>
+    <div class="container" style="">
+        <span id="round">{{ round.name }}</span>
+
+        <h1 id="question">{{ question.question }}</h1>
+
+        <div id="teams">
+            <ul>
+            </ul>
+        </div>
     </div>
 {% endblock %}
 
 
 {% block bottom %}
+<style>
+body {
+    margin: 0;
+    background: radial-gradient(ellipse 90% 80% at center, #895edc, #90c0e2);
+}
+.container {
+    display: flex;
+    flex-direction: row;
+    min-width: 100vw;
+    min-height: 100vh;
+    justify-content: space-around;
+}
+
+#round {
+    margin: 5px;
+    font-size: 28px;
+}
+
+#question {
+    flex-grow: 1;
+    align-self: center;
+    justify-self: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#teams {
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#teams > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#teams > ul > li {
+    font-size: 19px;
+}
+</style>
 <script>
     $(document).ready(function() {
         $(document).click(function(ev) {
@@ -18,6 +72,19 @@
                 $('#round').text(data.round);
             });
         });
+
+        function updateTeam() {
+            $.get('teams', function(data) {
+                $('#teams > ul').empty();
+                for (var i = 0; i < data['teams'].length; i++) {
+                    var team = data['teams'][i];
+                    $('#teams > ul').append('<li>' + team.name + ' : ' + team.points + '</li>');
+                }
+            })
+        }
+
+        updateTeam();
+        setInterval(updateTeam, 10000);
     });
 </script>
 {% endblock %}
