@@ -1,0 +1,33 @@
+{% extends 'buzzer/base.html' %}
+
+{% block container %}
+<style>
+#buzzer {
+    font-size: 26px;
+}
+#buzzer:hover {
+    cursor: pointer;
+}
+</style>
+
+<form action="." method="POST">
+    <button id="buzzer">Buzz !</button>
+</form>
+{% endblock %}
+
+{% block bottom %}
+<script>
+$(document).ready(function () {
+    $('#buzzer').click(function (e) {
+        e.preventDefault();
+        $('#buzzer').prop('disabled', true);
+        $('#buzzer').text('Buzzing...');
+        $.post('/buzz', {}, function (data) {
+            $('#buzzer').text('Buzz !');
+            $('#buzzer').prop('disabled', false);
+        });
+        return false;
+    });
+});
+</script>
+{% endblock %}

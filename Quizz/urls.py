@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('quizzer/', include('quizzer.urls')),
+    path('', include(('buzzer.urls', 'buzzer'), namespace='buzzer')),
+    path('quizzer/', include(('quizzer.urls', 'quizzer'), namespace='quizzer')),
     path('admin/', admin.site.urls),
 ]

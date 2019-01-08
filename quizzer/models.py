@@ -126,7 +126,7 @@ class Team(models.Model):
 
 
 class Participate(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='participations')
     quizz = models.ForeignKey(Quizz, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)
 

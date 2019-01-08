@@ -1,0 +1,22 @@
+{% extends 'buzzer/base.html' %}
+
+{% block container %}
+<div class="teams-list">
+	{% for team in teams %}
+	<a href="{% url 'buzzer:register_buzzer' team.id %}">{{ team.name }}</a>
+	{% endfor %}
+</div>
+
+<style>
+.teams-list {
+	display: flex;
+	flex-direction : column;
+}
+
+.teams-list > a {
+	text-decoration: none;
+	padding: 2vh 0;
+	font-size: 10vh;
+}
+</style>
+{% endblock %}

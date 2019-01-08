@@ -1,0 +1,31 @@
+{% extends 'quizzer/base.html' %}
+
+{% block body %}
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.buzzer-container {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    min-width: 100vw;
+    min-height: 100vh;
+}
+
+.buzzer-inner-container {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+}
+</style>
+
+<div class="buzzer-container">
+    <div class="buzzer-inner-container">
+        {% block container %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
