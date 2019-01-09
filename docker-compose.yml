@@ -10,7 +10,7 @@ services:
       - "./:/usr/src/app"
     labels:
       - "traefik.backend=quizz"
-      - "traefik.frontend.rule=Host:spro.local;"
+      - "traefik.frontend.rule=Host:192.168.1.24;"
     command: sh ./startup.sh
 
   static:
@@ -23,7 +23,7 @@ services:
     labels:
       traefik.port: "80"
       traefik.backend: "static"
-      traefik.frontend.rule: "Host:spro.local;PathPrefix:/static"
+      traefik.frontend.rule: "Host:192.168.1.24;PathPrefix:/static"
 
   pgquizz:
     image: postgres:10.6

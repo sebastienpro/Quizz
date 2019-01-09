@@ -8,10 +8,14 @@ from .models import QuizzerState, Participate, Question, Round, Team
 import redis
 redis_conn = redis.Redis(host=REDIS['host'], port=REDIS['port'], db=REDIS['database'])
 
+
 # Placeholder functions
 def get_current_quizz():
     return QuizzerState.objects.filter(state=True).order_by('-pk')[0]
 
+
+def clean_asshole():
+    redis_conn.delete("fucked")
 
 @login_required(login_url='/admin/login/')
 def index(request):
@@ -40,6 +44,7 @@ def teams(request):
 def next_question(request):
     quizzer_state = get_current_quizz()
     quizzer_state.next()
+    clean_asshole()
     response = {'question': quizzer_state.question_name, 'round': quizzer_state.round_name}
     return JsonResponse(response)
 
@@ -75,3 +80,9 @@ def add_point(request, team_id):
     team_participation.points += 1
     team_participation.save()
     return teams(request)
+
+
+@login_required
+def add_asshole_card(request, team_id):
+    redis_conn.sadd("fucked", team_id)
+    return JsonResponse({})

@@ -10,6 +10,15 @@ import redis
 
 redis_conn = redis.Redis(host=REDIS['host'], port=REDIS['port'], db=REDIS['database'])
 
+
+def is_fucked(team_id):
+    fucked = redis_conn.smembers("fucked")
+    if team_id in {int(f) for f in fucked}:
+        return True
+    else:
+        return False
+
+
 def teams(request):
     quizzer_state = get_current_quizz()
     teams = Team.objects.filter(participations__quizz=quizzer_state.quizz)
@@ -36,5 +45,6 @@ def buzzer(request):
 @csrf_exempt
 def buzz(request):
     team_id = request.session.get('team_id')
-    redis_conn.setnx('buzzer', team_id)
+    if not is_fucked(team_id):
+        redis_conn.setnx('buzzer', team_id)
     return HttpResponse('')
