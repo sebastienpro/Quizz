@@ -3,7 +3,17 @@
 {% block container %}
 <style>
 #buzzer {
-    font-size: 26px;
+    font-size: 10vw;
+    min-width: 80vw;
+    min-height: 80vh;
+    background-image: url(/static/img/bulle.png), linear-gradient(#fff6e7 11%, #d2ab20,  #c37c12);
+    background-size: cover;
+    border: 1px solid black;
+    text-align: center;
+    line-height: 80vh;
+}
+#buzzer.clicked {
+    background-image: url(/static/img/bulle.png), linear-gradient(#c37c12, #d2ab20, #fff6e7 89%);
 }
 #buzzer:hover {
     cursor: pointer;
@@ -11,7 +21,7 @@
 </style>
 
 <form action="." method="POST">
-    <button id="buzzer">Buzz !</button>
+    <div id="buzzer">Buzz !</div>
 </form>
 {% endblock %}
 
@@ -20,11 +30,9 @@
 $(document).ready(function () {
     $('#buzzer').click(function (e) {
         e.preventDefault();
-        $('#buzzer').prop('disabled', true);
         $('#buzzer').text('Buzzing...');
         $.post('/buzz', {}, function (data) {
             $('#buzzer').text('Buzz !');
-            $('#buzzer').prop('disabled', false);
         });
         return false;
     });
