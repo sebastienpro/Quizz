@@ -2,20 +2,22 @@
 
 
 {% block body %}
-<div class="container {% if question %}question{% elif round %}round{% endif %}">
-    <div class="inner-container">
-        <span id="round">{{ round.name }}</span>
+<div class="vbox viewport">
+
+    <div id="round">Manche: {{ round.name }}</div>
+
+    <div id="main-container" class="hbox {% if question %}question{% elif round %}round{% endif %}">
         <h1 id="question">{{ question.question_html|safe }}</h1>
+
+        <div id="teams"></div>
     </div>
 
-    <div id="sidebar">
-        <div id="teams">
-        </div>
+    <div id="buzzing-team">
+        Obi-Wan Kenobi
     </div>
+
 </div>
 
-<div id="buzzing-team">
-</div>
 
 <div class="team" id="team-template">
     <div class="beer team-btn">🍺</div>
@@ -30,51 +32,27 @@
 <style>
 body {
     margin: 0;
-    background: radial-gradient(ellipse 90% 80% at center, #895edc, #90c0e2);
+    background: url(/static/img/bulle.png), linear-gradient(#fff6e7 11%, #d2ab20,  #c37c12);
 }
-#buzzing-team {
-    display: none;
-    position: absolute;
-    bottom: 0;
-    border: 1px solid red;
-    background-color: white;
-    font-size: 32px;
-}
-.container {
-    display: flex;
-    flex-direction: row;
+
+.viewport {
     min-width: 100vw;
     min-height: 100vh;
-    justify-content: space-between;
-    align-items: center;
 }
 
-.inner-container {
+.vbox {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     justify-items: center;
     align-items: center;
-    padding: 20px;
 }
 
-
-.container.round #question {
-    display: none;
-}
-.container.question #question {
+.hbox {
     display: flex;
-}
-
-.container.round #round {
-    justify-self: center;
-    align-self: center;
-    text-align: center;
-    flex-grow: 1;
-    font-size: 5vw;
-    background-color: rgba(0, 0, 0, 0.4);
-    color: #ccc;
-    border-radius: 1vw;
+    flex-direction: row;
+    justify-content: space-between;
+    justify-items: center;
+    align-items: center;
 }
 
 #round {
@@ -83,13 +61,28 @@ body {
     text-align: center;
 }
 
+#main-container {
+    flex: 1;
+    min-width: 100vw;
+}
+
+#buzzing-team {
+    background-color: white;
+    font-size: 32px;
+    border-radius: 5px;
+    padding: 20px;
+    min-height: 5vh;
+    visibility: hidden;
+    margin-bottom: 10px;
+}
+
 #question {
     flex-grow: 1;
     align-self: center;
     justify-self: center;
     background-color: rgba(0, 0, 0, 0.4);
-    color: #ccc;
-    padding: 20px;
+    color: #eee;
+    margin: 0 10px 0 20px;
     border-radius: 10px;
     text-align: center;
 }
@@ -99,27 +92,14 @@ body {
 }
 
 #teams {
-    margin: 5px;
+    background-color: #eee;
+    border-radius: 5px;
+    box-shadow: 0 8px 6px -6px black;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    margin: 0 20px 0 10px;
+    max-width: 30vw;
     padding: 10px;
-    border-radius: 10px;
-}
-
-#teams {
-    list-style: none;
-    margin: 0 10px;
-    padding: 0;
-    background-color: white;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 0 8px 6px -6px black;
-}
-
-.teams {
-    font-size: 19px;
-    white-space: nowrap;
 }
 
 #team-template {
@@ -136,6 +116,8 @@ body {
 .team > .name {
     padding-left: 10px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .team > .points {
     text-align: right;
@@ -146,22 +128,22 @@ body {
 <script>
     function updateQuestion(data) {
         $('#question').html(data.question);
-        $('#round').html(data.round);
+        $('#round').html('Manche: ' + data.round);
 
         $('.container').removeClass('round');
         $('.container').removeClass('question');
         
         if (data.question) {
             $('.container').addClass('question');
+            $('#round').css('visibility', 'visible');
         } else if (data.round) {
+            $('#question').html('<p>' + data.round + '</p>');
+            $('#round').css('visibility', 'hidden');
             $('.container').addClass('round');
         }
     }
 
     $(document).ready(function() {
-        // $(document).click(function(ev) {
-        //     $.post('next/', {}, updateQuestion);
-        // });
 
         $(document).keyup(function(e) {
             if (e.which == 37) {
@@ -190,25 +172,21 @@ body {
                 }
             })
         }
-
-
         updateTeam();
-        // setInterval(updateTeam, 500);
 
 
         function updateBuzzingTeam() {
             $.get('{% url "quizzer:get_team_has_buzzed" %}', {}, function (data) {
-                console.log(data);
                 if (data.team) {
                     $('#buzzing-team').text(data.team);
-                    $('#buzzing-team').show();
+                    $('#buzzing-team').css('visibility', 'visible');
                 } else {
-                    $('#buzzing-team').hide();
+                    $('#buzzing-team').css('visibility', 'hidden');
                 }
             });
         }
 
-        setInterval(updateBuzzingTeam, 500);
+        setInterval(updateBuzzingTeam, 200);
 
         $('#buzzing-team').click(function(e) {
             e.preventDefault();
