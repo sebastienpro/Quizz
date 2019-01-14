@@ -126,7 +126,44 @@ body {
 }
 </style>
 <script>
+
+    function updateTeam() {
+            $.get('teams', function(data) {
+                $('#teams').html('');
+                for (var i = 0; i < data['teams'].length; i++) {
+                    var team = data['teams'][i];
+                    var $team = $('#team-template').clone();
+                    $team.attr('id', '');
+                    $team.attr('team-id', team.id);
+                    $team.find('.name').text(team.name);
+                    $team.find('.points').text(team.points);
+                    console.log(team);
+                    if (team.is_fucked){
+                        $team.find(".beer").text("⛔");
+                    }
+                    $team.appendTo('#teams');
+                    $team.find('.beer').click(function (e) {
+                        var $team = $($(e.target).parent());
+                        var teamId = $team.attr('team-id');
+                        $.post('/quizzer/add/' + teamId + '/', {}, updateTeam);
+                    });
+                    $team.find('.points').click(function (e) {
+                        var $team = $($(e.target).parent());
+                        var teamId = $team.attr('team-id');
+                        $.post('/quizzer/remove/' + teamId + '/', {}, updateTeam);
+                    });
+                    $team.find('.fuck').click(function (e) {
+                        var $team = $($(e.target).parent());
+                        var teamId = $team.attr('team-id');
+                        $.post('/quizzer/asshole/' + teamId + '/', {}, updateTeam);
+                    });
+                }
+            })
+        }
+
+        
     function updateQuestion(data) {
+        updateTeam();
         $('#question').html(data.question);
         $('#round').html('Manche: ' + data.round);
 
@@ -153,25 +190,6 @@ body {
             }
         });
 
-        function updateTeam() {
-            $.get('teams', function(data) {
-                $('#teams').html('');
-                for (var i = 0; i < data['teams'].length; i++) {
-                    var team = data['teams'][i];
-                    var $team = $('#team-template').clone();
-                    $team.attr('id', '');
-                    $team.attr('team-id', team.id);
-                    $team.find('.name').text(team.name);
-                    $team.find('.points').text(team.points);
-                    $team.appendTo('#teams');
-                    $team.find('.beer').click(function (e) {
-                        var $team = $($(e.target).parent());
-                        var teamId = $team.attr('team-id');
-                        $.post('/quizzer/add/' + teamId + '/', {}, updateTeam);
-                    });
-                }
-            })
-        }
         updateTeam();
 
 

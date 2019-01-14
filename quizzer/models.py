@@ -1,6 +1,11 @@
 import markdown
+import redis
 
 from django.db import models
+
+from Quizz.settings import REDIS
+
+redis_conn = redis.Redis(host=REDIS['host'], port=REDIS['port'], db=REDIS['database'])
 
 
 class Quizz(models.Model):
@@ -138,3 +143,11 @@ class Participate(models.Model):
 
     def __str__(self):
         return self.quizz.name+" / "+self.team.name
+
+    @property
+    def is_fucked(self):
+        fucked = redis_conn.smembers("fucked")
+        if self.team_id in {int(f) for f in fucked}:
+            return True
+        else:
+            return False
