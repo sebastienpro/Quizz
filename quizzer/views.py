@@ -83,6 +83,15 @@ def add_point(request, team_id):
 
 
 @login_required
+def remove_point(request, team_id):
+    quizzer_state = get_current_quizz()
+    team_participation = Participate.objects.get(team_id=team_id, quizz=quizzer_state.quizz)
+    team_participation.points -= 1
+    team_participation.save()
+    return teams(request)
+
+
+@login_required
 def add_asshole_card(request, team_id):
     redis_conn.sadd("fucked", team_id)
     return JsonResponse({})
