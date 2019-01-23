@@ -2,10 +2,19 @@
 
 {% block container %}
 <style>
+body {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
 #buzzer {
     font-size: 10vw;
     min-width: 80vw;
-    min-height: 80vh;
+    min-height: 70vh;
     background-image: url(/static/img/bulle.png), linear-gradient(#fff6e7 11%, #d2ab20,  #c37c12);
     background-size: cover;
     border: 1px solid black;
