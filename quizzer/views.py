@@ -33,7 +33,7 @@ def index(request):
 
 def teams(request):
     quizzer_state = get_current_quizz()
-    subscribed_teams = Participate.objects.filter(quizz=quizzer_state.quizz)
+    subscribed_teams = Participate.objects.filter(quizz=quizzer_state.quizz).order_by('-points')
     response = {'teams': []}
     for team in subscribed_teams:
         response['teams'].append({'name': team.team.name, 'points': team.points, 'id': team.pk, 'is_fucked': team.is_fucked})
@@ -76,7 +76,7 @@ def clear_buzzer(request):
 @login_required
 def add_point(request, team_id):
     quizzer_state = get_current_quizz()
-    team_participation = Participate.objects.get(team_id=team_id, quizz=quizzer_state.quizz)
+    team_participation = Participate.objects.get(pk=team_id, quizz=quizzer_state.quizz)
     team_participation.points += 1
     team_participation.save()
     return teams(request)
@@ -85,7 +85,7 @@ def add_point(request, team_id):
 @login_required
 def remove_point(request, team_id):
     quizzer_state = get_current_quizz()
-    team_participation = Participate.objects.get(team_id=team_id, quizz=quizzer_state.quizz)
+    team_participation = Participate.objects.get(pk=team_id, quizz=quizzer_state.quizz)
     team_participation.points -= 1
     team_participation.save()
     return teams(request)
@@ -93,5 +93,6 @@ def remove_point(request, team_id):
 
 @login_required
 def add_asshole_card(request, team_id):
-    redis_conn.sadd("fucked", team_id)
+    participate = Participate.objects.get(pk=team_id)
+    redis_conn.sadd("fucked", participate.team_id)
     return JsonResponse({})

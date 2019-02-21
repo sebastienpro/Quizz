@@ -124,6 +124,13 @@ class QuizzerState(models.Model):
             return self.question.question_html
 
     @property
+    def question_type(self):
+        if self.question:
+            return self.question.type
+        else:
+            return None
+
+    @property
     def round_name(self):
         if self.round:
             return self.round.name
